@@ -71,7 +71,7 @@ class NemoAIECSFargateStack(Stack):
         task_definition.add_container(
             "NemoAIECSContainer",
             image=_ecs.ContainerImage.from_registry(
-                "850995537443.dkr.ecr.us-east-1.amazonaws.com/cdk-hnb659fds-container-assets-850995537443-us-east-1:c1e458dd0768927ad7c0ac911784e0c75dcfe9a79903324635f93b40a0a12994"
+                "850995537443.dkr.ecr.us-east-1.amazonaws.com/cdk-hnb659fds-container-assets-850995537443-us-east-1:a6001d3e52475549956f87890fdce67c80196a8a8483281cbe8fd3a2c3fe07fa"
             ),
             logging=log_driver,
             memory_limit_mib=1024,
