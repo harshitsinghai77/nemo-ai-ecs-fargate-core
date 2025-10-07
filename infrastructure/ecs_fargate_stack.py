@@ -13,7 +13,21 @@ class NemoAIECSFargateStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        vpc = _ec2.Vpc.from_lookup(self, "VPC", is_default=True)
+        vpc = _ec2.Vpc(self, "NemoAIVPC",
+            max_azs=1,
+            subnet_configuration=[
+                _ec2.SubnetConfiguration(
+                    name="Public",
+                    subnet_type=_ec2.SubnetType.PUBLIC,
+                    cidr_mask=24
+                ),
+                _ec2.SubnetConfiguration(
+                    name="Private",
+                    subnet_type=_ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                    cidr_mask=24
+                )
+            ]
+        )
 
         cluster = _ecs.Cluster(self,"NemoAIECSCluster", vpc=vpc)
 
@@ -31,16 +45,22 @@ class NemoAIECSFargateStack(Stack):
         task_role = _iam.Role(self, "NemoAIECSTaskRole",
             assumed_by=_iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
             managed_policies=[
-            _iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonECSTaskExecutionRolePolicy")
-        ]
-        )
-        task_role.add_to_policy(_iam.PolicyStatement(
-            actions=[
-                "bedrock:InvokeModel",
-                "bedrock:InvokeModelWithResponseStream"
+                _iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonECSTaskExecutionRolePolicy")
             ],
-            resources=["*"],
-        ))
+            inline_policies={
+                "BedrockAccess": _iam.PolicyDocument(
+                    statements=[
+                        _iam.PolicyStatement(
+                            actions=[
+                                "bedrock:InvokeModel",
+                                "bedrock:InvokeModelWithResponseStream"
+                            ],
+                            resources=["*"]
+                        )
+                    ]
+                )
+            }
+        )
 
         task_definition = _ecs.FargateTaskDefinition(self, "NemoAIECSTaskDefinition",
             memory_limit_mib=1024,
