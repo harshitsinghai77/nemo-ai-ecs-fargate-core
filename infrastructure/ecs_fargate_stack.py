@@ -13,17 +13,14 @@ class NemoAIECSFargateStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
+        aws_account = Stack.of(self).account
+
         vpc = _ec2.Vpc(self, "NemoAIVPC",
             max_azs=1,
             subnet_configuration=[
                 _ec2.SubnetConfiguration(
                     name="Public",
                     subnet_type=_ec2.SubnetType.PUBLIC,
-                    cidr_mask=24
-                ),
-                _ec2.SubnetConfiguration(
-                    name="Private",
-                    subnet_type=_ec2.SubnetType.PRIVATE_WITH_EGRESS,
                     cidr_mask=24
                 )
             ]
@@ -53,7 +50,15 @@ class NemoAIECSFargateStack(Stack):
                         _iam.PolicyStatement(
                             actions=[
                                 "bedrock:InvokeModel",
-                                "bedrock:InvokeModelWithResponseStream"
+                                "bedrock:InvokeModelWithResponseStream",
+
+                                "bedrock-agentcore:CreateCodeInterpreter",
+                                "bedrock-agentcore:StartCodeInterpreterSession",
+                                "bedrock-agentcore:InvokeCodeInterpreter",
+                                "bedrock-agentcore:StopCodeInterpreterSession",
+                                "bedrock-agentcore:DeleteCodeInterpreter",
+                                "bedrock-agentcore:ListCodeInterpreters",
+                                "bedrock-agentcore:GetCodeInterpreter"
                             ],
                             resources=["*"]
                         )
@@ -71,7 +76,7 @@ class NemoAIECSFargateStack(Stack):
         task_definition.add_container(
             "NemoAIECSContainer",
             image=_ecs.ContainerImage.from_registry(
-                "850995537443.dkr.ecr.us-east-1.amazonaws.com/cdk-hnb659fds-container-assets-850995537443-us-east-1:a6001d3e52475549956f87890fdce67c80196a8a8483281cbe8fd3a2c3fe07fa"
+                f"{aws_account}.dkr.ecr.us-east-1.amazonaws.com/cdk-hnb659fds-container-assets-{aws_account}-us-east-1:ea12de5ee8bb94a89572cfde81ba31d8590a623072024381b328f12b4078b434"
             ),
             logging=log_driver,
             memory_limit_mib=1024,
