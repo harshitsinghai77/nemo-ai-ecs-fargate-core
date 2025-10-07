@@ -14,8 +14,6 @@ class NemoAIECSFargateStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        aws_account = Stack.of(self).account
-
         vpc = _ec2.Vpc(self, "NemoAIVPC",
             max_azs=1,
             subnet_configuration=[
