@@ -20,6 +20,11 @@ class NemoAIECSFargateStack(Stack):
                     name="Public",
                     subnet_type=_ec2.SubnetType.PUBLIC,
                     cidr_mask=24
+                ),
+                _ec2.SubnetConfiguration(
+                    name="Private",
+                    subnet_type=_ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                    cidr_mask=24
                 )
             ]
         )
