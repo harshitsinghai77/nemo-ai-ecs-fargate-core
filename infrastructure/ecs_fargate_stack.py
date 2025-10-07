@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_iam as _iam,
     aws_logs as _logs,
     aws_ec2 as _ec2,
+    aws_ecr as _ecr,
     RemovalPolicy,
     CfnOutput,
 )
@@ -27,6 +28,10 @@ class NemoAIECSFargateStack(Stack):
         )
 
         cluster = _ecs.Cluster(self,"NemoAIECSCluster", vpc=vpc)
+
+        ecr_repo = _ecr.Repository.from_repository_name(
+            self, "NemoAIEcrRepo", repository_name="nemo-ai-agent"
+        )
 
         log_group = _logs.LogGroup(
             self, "NemoAIContainerLogGroup",
@@ -75,8 +80,9 @@ class NemoAIECSFargateStack(Stack):
         )
         task_definition.add_container(
             "NemoAIECSContainer",
-            image=_ecs.ContainerImage.from_registry(
-                f"{aws_account}.dkr.ecr.us-east-1.amazonaws.com/cdk-hnb659fds-container-assets-{aws_account}-us-east-1:2fbe690d0ca765bdb0a6ea08ebe5700722be63eaf8a00e39d7442b99e7360ce8"
+            image=_ecs.ContainerImage.from_ecr_repository(
+                repository=ecr_repo,
+                tag="latest"
             ),
             logging=log_driver,
             memory_limit_mib=1024,
