@@ -25,7 +25,7 @@ class NemoAIECSFargateStack(Stack):
             ]
         )
 
-        cluster = _ecs.Cluster(self,"NemoAIECSCluster", vpc=vpc)
+        cluster = _ecs.Cluster(self,"NemoAIECSCluster", cluster_name="nemo-ai-ecs-fargate-cluster", vpc=vpc)
 
         ecr_repo = _ecr.Repository.from_repository_name(
             self, "NemoAIEcrRepo", repository_name="nemo-ai-agent"
