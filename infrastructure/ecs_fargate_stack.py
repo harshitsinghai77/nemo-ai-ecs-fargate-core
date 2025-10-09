@@ -66,6 +66,16 @@ class NemoAIECSFargateStack(Stack):
                             resources=["*"]
                         )
                     ]
+                ),
+                "SecretsAccess": _iam.PolicyDocument(
+                    statements=[
+                        _iam.PolicyStatement(
+                            actions=[
+                                "secretsmanager:GetSecretValue"
+                            ],
+                            resources=[f"arn:aws:secretsmanager:us-east-1:{Stack.of(self).account}:secret:github_personal_access_token-mhV2eN"],
+                        )
+                    ]
                 )
             }
         )
