@@ -95,6 +95,9 @@ class NemoAIECSFargateStack(Stack):
             logging=log_driver,
             memory_limit_mib=1024,
             cpu=512,
+            environment={
+                "AWS_ACCOUNT_ID": Stack.of(self).account,
+            }
         )
 
         CfnOutput(self, "TaskDefinitionArn", value=task_definition.task_definition_arn,  description="Task Definition ARN for Nemo AI ECS Fargate Task")
