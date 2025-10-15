@@ -1,1 +1,2 @@
 aws-cdk-lib==2.204.0
+python-dotenv

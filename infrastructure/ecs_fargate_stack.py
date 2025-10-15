@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+
 from aws_cdk import (
     Stack,
     aws_ecs as _ecs,
@@ -9,6 +12,12 @@ from aws_cdk import (
     CfnOutput,
 )
 from constructs import Construct
+
+load_dotenv(dotenv_path='.lambda.env')
+open_telemetry_envs = {
+    key: value for key, value in os.environ.items() if key.startswith("OTEL_")
+}
+
 
 class NemoAIECSFargateStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
@@ -97,6 +106,8 @@ class NemoAIECSFargateStack(Stack):
             cpu=512,
             environment={
                 "AWS_ACCOUNT_ID": Stack.of(self).account,
+                "AGENT_OBSERVABILITY_ENABLED": "true",
+                **open_telemetry_envs
             }
         )
 
