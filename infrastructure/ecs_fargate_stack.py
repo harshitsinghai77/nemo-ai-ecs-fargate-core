@@ -70,7 +70,14 @@ class NemoAIECSFargateStack(Stack):
                                 "bedrock-agentcore:StopCodeInterpreterSession",
                                 "bedrock-agentcore:DeleteCodeInterpreter",
                                 "bedrock-agentcore:ListCodeInterpreters",
-                                "bedrock-agentcore:GetCodeInterpreter"
+                                "bedrock-agentcore:GetCodeInterpreter",
+
+                                "logs:PutLogEvents",
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+
+                                "xray:PutTraceSegments",
+                                "xray:PutTelemetryRecords",
                             ],
                             resources=["*"]
                         )
