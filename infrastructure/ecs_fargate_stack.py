@@ -13,7 +13,7 @@ from aws_cdk import (
 )
 from constructs import Construct
 
-load_dotenv(dotenv_path='.lambda.env')
+load_dotenv(dotenv_path='otel_config.env')
 open_telemetry_envs = {
     key: value for key, value in os.environ.items() if key.startswith("OTEL_")
 }
